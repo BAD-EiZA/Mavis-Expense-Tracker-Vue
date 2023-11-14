@@ -2,9 +2,9 @@
   <HeaderComponent/>
   <div class="container">
     <BalanceComponent :total = "total"/>
-    <IncomeExpense :income ="income" :expense = "expense"/>
+    <IncomeExpense :income ="+income" :expense = "+expense"/>
     <TransactionList :transactions="transactions"/>
-    <AddTransaction/>
+    <AddTransaction @transactionSubmitted="handleTransactionSubmitted" />
   </div>
 </template>
 
@@ -15,6 +15,7 @@ import HeaderComponent from './components/HeaderComponent.vue';
 import IncomeExpense from './components/IncomeExpense.vue';
 import TransactionList from './components/TransactionList.vue';
 import {ref, computed} from 'vue'
+import { useToast } from 'vue-toastification';
 const transactions = ref([
     {
         id: 1, text: "Sword", amount: -20000
@@ -47,4 +48,18 @@ const expense = computed(() => {
     return acc + transaction.amount;
     }, 0).toFixed(2)
 })
+const toast = useToast()
+const handleTransactionSubmitted = (transactionData) => {
+  transactions.value.push({
+    id: generateUniqueId(),
+    text: transactionData.text,
+    amount: transactionData.amount
+  });
+  console.log(transactionData.text)
+  toast.success("Transaction Added")
+}
+
+const generateUniqueId = () => {
+  return Math.floor(Math.random() * 1000000);
+}
 </script>
